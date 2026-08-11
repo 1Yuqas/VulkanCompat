@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "vulkancompat",
+  "version": "${version}",
+  "name": "VulkanCompat",
+  "description": "VulkanCompat is a Fabric mod that makes Minecraft's Vulkan renderer work on older GPUs that lack VK_KHR_dynamic_rendering support.",
+  "authors": [],
+  "contact": {},
+  "license": "unlicense",
+  "icon": "assets/vulkancompat/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "one.yuqas.Vulkancompat"
+    ]
+  },
+  "mixins": [
+    "vulkancompat.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
