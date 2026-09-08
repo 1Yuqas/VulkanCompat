@@ -2,6 +2,7 @@ package one.yuqas.compat.render;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.vulkan.VK12;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
@@ -27,7 +28,8 @@ public final class FramebufferCache {
             ci.height(height);
             ci.layers(1);
             LongBuffer h = stack.callocLong(1);
-            int result = VK12.vkCreateFramebuffer(device, ci, null, h);
+            // Vulkan 1.2: direct n-call + stack.longs already uses MemoryUtil, zero-copy
+            int result = VK12.nvkCreateFramebuffer(device, ci.address(), MemoryUtil.NULL, MemoryUtil.memAddress(h));
             if (result != 0) throw new IllegalStateException("VulkanCompat: failed to create framebuffer, result=" + result);
             long fb = h.get(0);
             CACHE.put(key, fb);
@@ -41,6 +43,7 @@ public final class FramebufferCache {
             var e = it.next();
             FramebufferKey k = e.getKey();
             if (k.references(imageView)) {
+                // Vulkan 1.2: direct destroy via n-method would be VK12.nvkDestroyFramebuffer but wrapper is fine for rare path
                 VK12.vkDestroyFramebuffer(k.device, e.getLongValue(), null);
                 it.remove();
             }

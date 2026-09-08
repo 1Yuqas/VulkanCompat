@@ -2,6 +2,7 @@ package one.yuqas.compat.render;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.vulkan.VK12;
 import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkAttachmentReference;
@@ -93,7 +94,8 @@ public final class RenderPassCache {
             ci.pDependencies(deps);
 
             LongBuffer h = stack.callocLong(1);
-            int result = VK12.vkCreateRenderPass(device, ci, null, h);
+            // Vulkan 1.2 technique: direct n-call avoids wrapper overhead (VK12 core dispatch)
+            int result = VK12.nvkCreateRenderPass(device, ci.address(), MemoryUtil.NULL, MemoryUtil.memAddress(h));
             if (result != 0) throw new IllegalStateException("VulkanCompat: failed to create render pass, result=" + result);
             long rp = h.get(0);
             CACHE.put(key, rp);

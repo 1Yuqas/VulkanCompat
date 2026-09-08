@@ -1,6 +1,7 @@
 package one.yuqas.compat.render;
 
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.vulkan.VK12;
 import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkClearValue;
@@ -104,7 +105,8 @@ public final class LegacyRenderPass {
             beginInfo.renderArea(renderingInfo.renderArea());
             beginInfo.clearValueCount(attachmentCount);
             beginInfo.pClearValues(clearValues);
-            VK12.vkCmdBeginRenderPass(commandBuffer, beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+            // Vulkan 1.2: direct n-call (VK12 core) avoids wrapper + null allocator, uses MemoryUtil.NULL for speed
+            VK12.nvkCmdBeginRenderPass(commandBuffer, beginInfo.address(), VK_SUBPASS_CONTENTS_INLINE);
         }
     }
 
