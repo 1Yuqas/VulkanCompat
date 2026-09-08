@@ -1,6 +1,7 @@
-package one.yuqas.compat;
+package one.yuqas.compat.view;
 
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import one.yuqas.compat.render.LegacyRenderPass;
 
 public final class ViewRegistry {
     private static final Long2LongOpenHashMap VIEWS = new Long2LongOpenHashMap(128);
@@ -24,30 +25,30 @@ public final class ViewRegistry {
         LegacyRenderPass.invalidateFramebuffers(imageView);
     }
 
-    static long getPacked(long imageView) {
+    public static long getPacked(long imageView) {
         return VIEWS.get(imageView);
     }
 
-    static boolean contains(long imageView) {
+    public static boolean contains(long imageView) {
         return VIEWS.containsKey(imageView);
     }
 
     // legacy object view for compatibility, zero-alloc unpack
-    static ViewInfo get(long imageView) {
+    public static ViewInfo get(long imageView) {
         long packed = VIEWS.get(imageView);
         if (packed == Long.MIN_VALUE) return null;
         return new ViewInfo((int) (packed >>> 32), (int) ((packed >>> 16) & 0xFFFF), (int) (packed & 0xFFFF));
     }
 
-    static int getFormat(long packed) {
+    public static int getFormat(long packed) {
         return (int) (packed >>> 32);
     }
 
-    static int getWidth(long packed) {
+    public static int getWidth(long packed) {
         return (int) ((packed >>> 16) & 0xFFFF);
     }
 
-    static int getHeight(long packed) {
+    public static int getHeight(long packed) {
         return (int) (packed & 0xFFFF);
     }
 

@@ -1,8 +1,8 @@
 package one.yuqas.mixin;
 
 import com.mojang.blaze3d.vulkan.VulkanRenderPipeline;
-import one.yuqas.compat.DeviceSupport;
-import one.yuqas.compat.LegacyRenderPass;
+import one.yuqas.compat.device.DeviceSupport;
+import one.yuqas.compat.render.LegacyRenderPass;
 import org.lwjgl.vulkan.VK12;
 import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkDevice;

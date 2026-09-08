@@ -1,4 +1,4 @@
-package one.yuqas.compat;
+package one.yuqas.compat.device;
 
 import com.mojang.blaze3d.vulkan.VulkanPhysicalDevice;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
@@ -32,11 +32,11 @@ public final class DeviceSupport {
         }
     }
 
-    static String extensionName() {
+    public static String extensionName() {
         return DYNAMIC_RENDERING_EXTENSION;
     }
 
-    static String featureName() {
+    public static String featureName() {
         return "dynamicRendering";
     }
 }

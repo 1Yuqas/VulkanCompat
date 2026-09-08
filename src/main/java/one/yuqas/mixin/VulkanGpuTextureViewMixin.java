@@ -3,7 +3,7 @@ package one.yuqas.mixin;
 import com.mojang.blaze3d.vulkan.VulkanConst;
 import com.mojang.blaze3d.vulkan.VulkanGpuTexture;
 import com.mojang.blaze3d.vulkan.VulkanGpuTextureView;
-import one.yuqas.compat.ViewRegistry;
+import one.yuqas.compat.view.ViewRegistry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

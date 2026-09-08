@@ -2,7 +2,7 @@ package one.yuqas.mixin;
 
 import  com.mojang.blaze3d.vulkan.VulkanBackend;
 import com.mojang.blaze3d.vulkan.init.VulkanFeature;
-import one.yuqas.compat.FeatureCompat;
+import one.yuqas.compat.feature.FeatureCompat;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;

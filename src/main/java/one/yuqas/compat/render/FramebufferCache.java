@@ -1,4 +1,4 @@
-package one.yuqas.compat;
+package one.yuqas.compat.render;
 
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import org.lwjgl.system.MemoryStack;

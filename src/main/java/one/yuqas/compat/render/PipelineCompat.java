@@ -1,4 +1,4 @@
-package one.yuqas.compat;
+package one.yuqas.compat.render;
 
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VK12;
@@ -13,7 +13,7 @@ import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.util.Arrays;
 
-import static one.yuqas.compat.VulkanConstants.*;
+import static one.yuqas.compat.render.VulkanConstants.*;
 
 public final class PipelineCompat {
     private PipelineCompat() {}

@@ -1,6 +1,7 @@
-package one.yuqas.compat;
+package one.yuqas.compat.feature;
 
 import com.mojang.blaze3d.vulkan.init.VulkanFeature;
+import one.yuqas.compat.device.DeviceSupport;
 
 import java.util.HashSet;
 import java.util.Set;

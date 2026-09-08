@@ -1,4 +1,4 @@
-package one.yuqas.compat;
+package one.yuqas.compat.render;
 
 public final class VulkanConstants {
     private VulkanConstants() {}
