@@ -70,8 +70,10 @@ public final class LegacyRenderPass {
                     ? colorAttachmentInfos.remaining() : declaredColorCount;
             int colorCount = 0;
             if (colorAttachmentInfos != null) {
+                long base = colorAttachmentInfos.address();
                 for (int i = 0; i < totalColors; i++) {
-                    if (colorAttachmentInfos.get(i).imageView() != 0L) {
+                    long addr = base + (long) i * VkRenderingAttachmentInfo.SIZEOF;
+                    if (VkRenderingAttachmentInfo.nimageView(addr) != 0L) {
                         colorCount++;
                     }
                 }
@@ -89,26 +91,30 @@ public final class LegacyRenderPass {
             int framebufferHeight = 0;
             int index = 0;
             if (colorAttachmentInfos != null) {
+                long base2 = colorAttachmentInfos.address();
                 for (int i = 0; i < totalColors; i++) {
-                    VkRenderingAttachmentInfo attachment = colorAttachmentInfos.get(i);
-                    long view = attachment.imageView();
+                    long addr = base2 + (long) i * VkRenderingAttachmentInfo.SIZEOF;
+                    long view = VkRenderingAttachmentInfo.nimageView(addr);
                     if (view == 0L) {
                         continue;
                     }
-                    ViewRegistry.ViewInfo info = ViewRegistry.get(view);
-                    if (info == null) {
+                    int loadOp = VkRenderingAttachmentInfo.nloadOp(addr);
+                    int storeOp = VkRenderingAttachmentInfo.nstoreOp(addr);
+                    long packed = ViewRegistry.getPacked(view);
+                    if (packed == Long.MIN_VALUE) {
                         throw new IllegalStateException("VulkanCompat: unknown color image view " + view);
                     }
-                    colorFormats[index] = info.format;
-                    colorLoadOps[index] = attachment.loadOp();
-                    colorStoreOps[index] = attachment.storeOp();
+                    colorFormats[index] = ViewRegistry.getFormat(packed);
+                    colorLoadOps[index] = loadOp;
+                    colorStoreOps[index] = storeOp;
                     colorViews[index] = view;
                     if (framebufferWidth == 0) {
-                        framebufferWidth = info.width;
-                        framebufferHeight = info.height;
+                        framebufferWidth = ViewRegistry.getWidth(packed);
+                        framebufferHeight = ViewRegistry.getHeight(packed);
                     }
-                    if (attachment.loadOp() == VK_ATTACHMENT_LOAD_OP_CLEAR) {
-                        clearValues.get(index).set(attachment.clearValue());
+                    if (loadOp == VK_ATTACHMENT_LOAD_OP_CLEAR) {
+                        VkClearValue src = VkRenderingAttachmentInfo.nclearValue(addr);
+                        clearValues.get(index).set(src);
                     }
                     index++;
                 }
@@ -118,16 +124,16 @@ public final class LegacyRenderPass {
             int depthStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
             if (hasDepth) {
                 long depthView = depthAttachmentInfo.imageView();
-                ViewRegistry.ViewInfo info = ViewRegistry.get(depthView);
-                if (info == null) {
+                long packed = ViewRegistry.getPacked(depthView);
+                if (packed == Long.MIN_VALUE) {
                     throw new IllegalStateException("VulkanCompat: unknown depth image view " + depthView);
                 }
-                depthFormat = info.format;
+                depthFormat = ViewRegistry.getFormat(packed);
                 depthLoadOp = depthAttachmentInfo.loadOp();
                 depthStoreOp = depthAttachmentInfo.storeOp();
                 if (framebufferWidth == 0) {
-                    framebufferWidth = info.width;
-                    framebufferHeight = info.height;
+                    framebufferWidth = ViewRegistry.getWidth(packed);
+                    framebufferHeight = ViewRegistry.getHeight(packed);
                 }
                 if (depthLoadOp == VK_ATTACHMENT_LOAD_OP_CLEAR) {
                     clearValues.get(depthIndex).set(depthAttachmentInfo.clearValue());
