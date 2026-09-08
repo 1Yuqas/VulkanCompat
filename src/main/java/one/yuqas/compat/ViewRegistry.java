@@ -1,10 +1,9 @@
 package one.yuqas.compat;
 
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 
 public final class ViewRegistry {
-    private static final Map<Long, ViewInfo> VIEWS = new HashMap<>();
+    private static final Long2ObjectOpenHashMap<ViewInfo> VIEWS = new Long2ObjectOpenHashMap<>(64);
 
     private ViewRegistry() {}
 
