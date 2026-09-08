@@ -168,7 +168,7 @@ public final class LegacyRenderPass {
             try {
                 renderingInfo = VkPipelineRenderingCreateInfo.create(renderingInfoAddress);
                 // Validate sType is rendering create info (core or KHR share value)
-                if (renderingInfo.sType() != VkPipelineRenderingCreateInfoKHR.TYPE && renderingInfo.sType() != VkPipelineRenderingCreateInfo.TYPE) {
+                if (renderingInfo.sType() != VK13.VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO) {
                     renderingInfo = null;
                 }
             } catch (Exception e) {
@@ -187,8 +187,6 @@ public final class LegacyRenderPass {
                 formatsBuffer = renderingInfoKHR.pColorAttachmentFormats();
                 declaredCount = renderingInfoKHR.colorAttachmentCount();
             }
-            IntBuffer formatsBuffer = renderingInfo.pColorAttachmentFormats();
-            int declaredCount = renderingInfo.colorAttachmentCount();
             int total = formatsBuffer != null
                     && (declaredCount <= 0 || declaredCount > formatsBuffer.remaining())
                     ? formatsBuffer.remaining() : declaredCount;
