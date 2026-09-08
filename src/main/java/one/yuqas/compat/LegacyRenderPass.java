@@ -2,6 +2,7 @@ package one.yuqas.compat;
 
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.vulkan.VK12;
+import org.lwjgl.vulkan.VK13;
 import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkAttachmentDescription;
 import org.lwjgl.vulkan.VkAttachmentReference;
@@ -10,6 +11,7 @@ import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkDevice;
 import org.lwjgl.vulkan.VkFramebufferCreateInfo;
 import org.lwjgl.vulkan.VkGraphicsPipelineCreateInfo;
+import org.lwjgl.vulkan.VkPipelineRenderingCreateInfo;
 import org.lwjgl.vulkan.VkPipelineRenderingCreateInfoKHR;
 import org.lwjgl.vulkan.VkRenderPassBeginInfo;
 import org.lwjgl.vulkan.VkRenderPassCreateInfo;
@@ -47,14 +49,15 @@ public final class LegacyRenderPass {
     private LegacyRenderPass() {}
 
     static void invalidateFramebuffers(long imageView) {
-        FRAMEBUFFERS.entrySet().removeIf(entry -> {
-            if (entry.getKey().references(imageView)) {
-                FramebufferKey key = entry.getKey();
-                VK12.vkDestroyFramebuffer(key.device, entry.getValue(), null);
-                return true;
+        var it = FRAMEBUFFERS.object2LongEntrySet().iterator();
+        while (it.hasNext()) {
+            var entry = it.next();
+            FramebufferKey key = entry.getKey();
+            if (key.references(imageView)) {
+                VK12.vkDestroyFramebuffer(key.device, entry.getLongValue(), null);
+                it.remove();
             }
-            return false;
-        });
+        }
     }
 
     public static void begin(VkCommandBuffer commandBuffer, VkRenderingInfo renderingInfo) {
@@ -159,7 +162,31 @@ public final class LegacyRenderPass {
             return VK12.vkCreateGraphicsPipelines(device, pipelineCache, createInfos, allocator, pPipelines);
         }
         try (MemoryStack stack = MemoryStack.stackPush()) {
-            VkPipelineRenderingCreateInfoKHR renderingInfo = VkPipelineRenderingCreateInfoKHR.create(renderingInfoAddress);
+            // New LWJGL technique: try core VkPipelineRenderingCreateInfo (VK13) first, fallback to KHR
+            // Both share same layout (sType 1000044000), so either works - prefer core for 1.3+
+            VkPipelineRenderingCreateInfo renderingInfo;
+            try {
+                renderingInfo = VkPipelineRenderingCreateInfo.create(renderingInfoAddress);
+                // Validate sType is rendering create info (core or KHR share value)
+                if (renderingInfo.sType() != VkPipelineRenderingCreateInfoKHR.TYPE && renderingInfo.sType() != VkPipelineRenderingCreateInfo.TYPE) {
+                    renderingInfo = null;
+                }
+            } catch (Exception e) {
+                renderingInfo = null;
+            }
+            VkPipelineRenderingCreateInfoKHR renderingInfoKHR = null;
+            IntBuffer formatsBuffer;
+            int declaredCount;
+            if (renderingInfo != null) {
+                formatsBuffer = renderingInfo.pColorAttachmentFormats();
+                declaredCount = renderingInfo.colorAttachmentCount();
+                // keep depth format from core struct
+                // will be read below after setup
+            } else {
+                renderingInfoKHR = VkPipelineRenderingCreateInfoKHR.create(renderingInfoAddress);
+                formatsBuffer = renderingInfoKHR.pColorAttachmentFormats();
+                declaredCount = renderingInfoKHR.colorAttachmentCount();
+            }
             IntBuffer formatsBuffer = renderingInfo.pColorAttachmentFormats();
             int declaredCount = renderingInfo.colorAttachmentCount();
             int total = formatsBuffer != null
@@ -187,7 +214,8 @@ public final class LegacyRenderPass {
             int[] storeOps = new int[colorCount];
             Arrays.fill(loadOps, VK_ATTACHMENT_LOAD_OP_LOAD);
             Arrays.fill(storeOps, VK_ATTACHMENT_STORE_OP_STORE);
-            long renderPass = getOrCreateRenderPass(device, colorFormats, renderingInfo.depthAttachmentFormat(),
+            int depthFormat = renderingInfo != null ? renderingInfo.depthAttachmentFormat() : renderingInfoKHR.depthAttachmentFormat();
+            long renderPass = getOrCreateRenderPass(device, colorFormats, depthFormat,
                     loadOps, storeOps, VK_ATTACHMENT_LOAD_OP_LOAD, VK_ATTACHMENT_STORE_OP_STORE);
             createInfos.renderPass(renderPass);
             createInfos.subpass(0);
