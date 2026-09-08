@@ -1,22 +1,19 @@
-package one.yuqas.compat;
+package one.yuqas.compat.device;
 
 import com.mojang.renderpearl.backend.vulkan.VulkanPhysicalDevice;
+import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import org.lwjgl.vulkan.VkDevice;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public final class DeviceSupport {
     private static final String DYNAMIC_RENDERING_EXTENSION = "VK_KHR_dynamic_rendering";
-    private static final Map<Long, Boolean> CACHE = new HashMap<>();
+    private static final Long2BooleanOpenHashMap CACHE = new Long2BooleanOpenHashMap(16);
 
     private DeviceSupport() {}
 
     public static boolean supportsDynamicRendering(VkDevice device) {
         long key = device.getPhysicalDevice().address();
-        Boolean cached = CACHE.get(key);
-        if (cached != null) {
-            return cached;
+        if (CACHE.containsKey(key)) {
+            return CACHE.get(key);
         }
         boolean supported = true;
         try (VulkanPhysicalDevice physicalDevice = new VulkanPhysicalDevice(device.getPhysicalDevice())) {
@@ -35,11 +32,11 @@ public final class DeviceSupport {
         }
     }
 
-    static String extensionName() {
+    public static String extensionName() {
         return DYNAMIC_RENDERING_EXTENSION;
     }
 
-    static String featureName() {
+    public static String featureName() {
         return "dynamicRendering";
     }
 }

@@ -1,10 +1,10 @@
 package one.yuqas.mixin;
 
 import com.mojang.renderpearl.backend.vulkan.VulkanCommandEncoder;
-import one.yuqas.compat.DeviceSupport;
-import one.yuqas.compat.LegacyRenderPass;
-import org.lwjgl.vulkan.KHRDynamicRendering;
+import one.yuqas.compat.device.DeviceSupport;
+import one.yuqas.compat.render.LegacyRenderPass;
 import org.lwjgl.vulkan.VK12;
+import org.lwjgl.vulkan.VK13;
 import org.lwjgl.vulkan.VkCommandBuffer;
 import org.lwjgl.vulkan.VkRenderingInfo;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,7 +23,7 @@ public abstract class VulkanCommandEncoderMixin {
         if (!DeviceSupport.supportsDynamicRendering(commandBuffer.getDevice())) {
             LegacyRenderPass.begin(commandBuffer, renderingInfo);
         } else {
-            KHRDynamicRendering.vkCmdBeginRenderingKHR(commandBuffer, renderingInfo);
+            VK13.vkCmdBeginRendering(commandBuffer, renderingInfo);
         }
     }
 
@@ -36,7 +36,7 @@ public abstract class VulkanCommandEncoderMixin {
         if (!DeviceSupport.supportsDynamicRendering(commandBuffer.getDevice())) {
             VK12.vkCmdEndRenderPass(commandBuffer);
         } else {
-            KHRDynamicRendering.vkCmdEndRenderingKHR(commandBuffer);
+            VK13.vkCmdEndRendering(commandBuffer);
         }
     }
 }

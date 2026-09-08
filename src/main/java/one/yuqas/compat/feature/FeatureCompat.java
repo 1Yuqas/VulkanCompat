@@ -1,7 +1,8 @@
-package one.yuqas.compat;
+package one.yuqas.compat.feature;
 
 import com.mojang.renderpearl.backend.vulkan.init.FeatureSet;
 import com.mojang.renderpearl.backend.vulkan.init.VulkanFeature;
+import one.yuqas.compat.device.DeviceSupport;
 
 import java.util.HashSet;
 import java.util.Set;

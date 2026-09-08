@@ -2,7 +2,7 @@ package one.yuqas.mixin;
 
 import com.mojang.renderpearl.backend.vulkan.VulkanFeatureSets;
 import com.mojang.renderpearl.backend.vulkan.init.FeatureSet;
-import one.yuqas.compat.FeatureCompat;
+import one.yuqas.compat.feature.FeatureCompat;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

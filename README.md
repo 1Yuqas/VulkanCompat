@@ -49,7 +49,7 @@ When the driver *does* support dynamic rendering, the mod does nothing and the g
 
 ## Compatibility
 
-- Works with **any GPU** that supports Vulkan 1.0+ (which is practically all Vulkan-capable GPUs)
+- Works with **any GPU** that supports Vulkan 1.2+ (which is practically all Vulkan-capable GPUs)
 - GPU-specific drivers that lack `VK_KHR_dynamic_rendering` (e.g. older Intel, AMD, NVIDIA drivers; some Wine/Proton environments) benefit the most
 - Client-side only; safe for singleplayer and multiplayer
 
@@ -107,7 +107,7 @@ Sürücü dinamik rendering *destekliyorsa* mod hiçbir şey yapmaz ve oyun tama
 
 ## Uyumluluk
 
-- Vulkan 1.0+ destekleyen **her GPU** ile çalışır (yani Vulkan destekleyen tüm GPU'lar)
+- Vulkan 1.2+ destekleyen **her GPU** ile çalışır (yani Vulkan destekleyen tüm GPU'lar)
 - `VK_KHR_dynamic_rendering` eklentisi olmayan sürücüler (eski Intel, AMD, NVIDIA sürücüleri; bazı Wine/Proton ortamları) en çok fayda görür
 - İstemci tarafı; tek oyunculu ve çok oyunculuda güvenle kullanılabilir
 
