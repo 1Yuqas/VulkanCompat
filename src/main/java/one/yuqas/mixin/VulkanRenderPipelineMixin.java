@@ -1,7 +1,8 @@
 package one.yuqas.mixin;
 
 import com.mojang.blaze3d.vulkan.VulkanRenderPipeline;
-import one.yuqas.Vulkancompat;
+import one.yuqas.compat.DeviceSupport;
+import one.yuqas.compat.LegacyRenderPass;
 import org.lwjgl.vulkan.VK12;
 import org.lwjgl.vulkan.VkAllocationCallbacks;
 import org.lwjgl.vulkan.VkDevice;
@@ -23,8 +24,8 @@ public abstract class VulkanRenderPipelineMixin {
     private static int qadish$createGraphicsPipelines(VkDevice device, long pipelineCache,
                                                       VkGraphicsPipelineCreateInfo.Buffer createInfos,
                                                       VkAllocationCallbacks allocator, LongBuffer pPipelines) {
-        if (!Vulkancompat.supportsDynamicRendering(device)) {
-            return Vulkancompat.createGraphicsPipelines(device, pipelineCache, createInfos, allocator, pPipelines);
+        if (!DeviceSupport.supportsDynamicRendering(device)) {
+            return LegacyRenderPass.createGraphicsPipelines(device, pipelineCache, createInfos, allocator, pPipelines);
         }
         return VK12.vkCreateGraphicsPipelines(device, pipelineCache, createInfos, allocator, pPipelines);
     }

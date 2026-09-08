@@ -2,7 +2,7 @@ package one.yuqas.mixin;
 
 import  com.mojang.blaze3d.vulkan.VulkanBackend;
 import com.mojang.blaze3d.vulkan.init.VulkanFeature;
-import one.yuqas.Vulkancompat;
+import one.yuqas.compat.FeatureCompat;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,7 +24,7 @@ public abstract class VulkanBackendMixin {
             at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/vulkan/VulkanBackend;REQUIRED_DEVICE_EXTENSIONS:Ljava/util/Set;")
     )
     private static Set<String> qadish$createDeviceExtensions() {
-        return Vulkancompat.stripRequiredExtensions(REQUIRED_DEVICE_EXTENSIONS);
+        return FeatureCompat.stripRequiredExtensions(REQUIRED_DEVICE_EXTENSIONS);
     }
 
     @Redirect(
@@ -32,7 +32,7 @@ public abstract class VulkanBackendMixin {
             at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/vulkan/VulkanBackend;REQUIRED_DEVICE_FEATURES:Ljava/util/Set;")
     )
     private static Set<VulkanFeature> qadish$createDeviceFeatures() {
-        return Vulkancompat.stripRequiredFeatures(REQUIRED_DEVICE_FEATURES);
+        return FeatureCompat.stripRequiredFeatures(REQUIRED_DEVICE_FEATURES);
     }
 
     @Redirect(
@@ -40,7 +40,7 @@ public abstract class VulkanBackendMixin {
             at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/vulkan/VulkanBackend;REQUIRED_DEVICE_EXTENSIONS:Ljava/util/Set;")
     )
     private static Set<String> qadish$isDeviceSuitableExtensions() {
-        return Vulkancompat.stripRequiredExtensions(REQUIRED_DEVICE_EXTENSIONS);
+        return FeatureCompat.stripRequiredExtensions(REQUIRED_DEVICE_EXTENSIONS);
     }
 
     @Redirect(
@@ -48,7 +48,7 @@ public abstract class VulkanBackendMixin {
             at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/vulkan/VulkanBackend;REQUIRED_DEVICE_FEATURES:Ljava/util/Set;")
     )
     private static Set<VulkanFeature> qadish$isDeviceSuitableFeatures() {
-        return Vulkancompat.stripRequiredFeatures(REQUIRED_DEVICE_FEATURES);
+        return FeatureCompat.stripRequiredFeatures(REQUIRED_DEVICE_FEATURES);
     }
 
     @Redirect(
@@ -56,7 +56,7 @@ public abstract class VulkanBackendMixin {
             at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/vulkan/VulkanBackend;REQUIRED_DEVICE_EXTENSIONS:Ljava/util/Set;")
     )
     private static Set<String> qadish$throwForMissingExtensions() {
-        return Vulkancompat.stripRequiredExtensions(REQUIRED_DEVICE_EXTENSIONS);
+        return FeatureCompat.stripRequiredExtensions(REQUIRED_DEVICE_EXTENSIONS);
     }
 
     @Redirect(
@@ -64,6 +64,6 @@ public abstract class VulkanBackendMixin {
             at = @At(value = "FIELD", target = "Lcom/mojang/blaze3d/vulkan/VulkanBackend;REQUIRED_DEVICE_FEATURES:Ljava/util/Set;")
     )
     private static Set<VulkanFeature> qadish$throwForMissingFeatures() {
-        return Vulkancompat.stripRequiredFeatures(REQUIRED_DEVICE_FEATURES);
+        return FeatureCompat.stripRequiredFeatures(REQUIRED_DEVICE_FEATURES);
     }
 }
